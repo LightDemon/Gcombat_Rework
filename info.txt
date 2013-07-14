@@ -1,0 +1,11 @@
+"AddonInfo"
+{
+	"name"				"Gcombat Rework"
+	"version"			"0.1"
+	"up_date"			"2/21/10"
+	"author_name"		"LightDemon"
+	"author_email"		"LightDemon@fullsail.edu"
+	"author_url"		""
+	"info"				"Motivation to build faster :D"
+	"override"			"0"
+}
