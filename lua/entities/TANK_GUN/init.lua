@@ -10,8 +10,8 @@ function ENT:Initialize()
 	self.cont1 = 0
 	self.cont2 = 0
 	self.armed = true
-	self.vectorchange = Vector(0,0,-150)
-	self.speed = 4000
+	self.vectorchange = Vector(0,0,-90)
+	self.speed = 8000
 	self.anglechange = Angle(90,0,0)
 	self.damage1 = 1000 --Base damage of shell
 	self.perice1 = 7 -- Base perice chance of shell
