@@ -17,6 +17,8 @@ function ENT:Initialize()
 	self.perice1 = 7 -- Base perice chance of shell
 	self.damage2 = 2000
 	self.perice2 = 4
+	self.radius1 = 0
+	self.radius2 = 300
 	self.attacktype = 1 --Creating attack type check so the shell knows what to do
 	self.smoking = false
 	self.Entity:SetModel( "models/combatmodels/tank_gun.mdl" ) 	--Model the cannon will use
@@ -32,10 +34,10 @@ function ENT:Initialize()
 	self.expl[2] = "weapons/explode4.wav"
 	self.expl[3] = "weapons/explode5.wav"
 	
-	self.effectdata = EffectData()
-		effectdata:SetOrigin(self.Entity:GetPos() +  self.Entity:GetUp() * 50)
-		effectdata:SetNormal( self:GetUp() )
-	self.effect = "cannon_flare"
+	local data = EffectData()
+		data:SetOrigin(self.Entity:GetPos() +  self.Entity:GetUp() * 50)
+		data:SetNormal( self:GetUp() )
+	local effect = "cannon_flare"
           
 	local phys = self.Entity:GetPhysicsObject()  	
 	if (phys:IsValid()) then  		
@@ -73,12 +75,22 @@ function ENT:TriggerInput(iname, value)
 	if (iname == self.fire1 and value == 1) then
 		if (self.armed) then
 			GC_FireShell( self.vectorchange , self.speed , self.damage1 , self.perice1 , self.ammomodel , self.smoking , self.Owner, self.Entity , 1, self.cont1 )
+			local data = EffectData()
+				data:SetOrigin(self.Entity:GetPos() +  self.Entity:GetUp() * 50)
+				data:SetNormal( self:GetUp() )
+			local effect = "cannon_flare"
+			util.Effect(effect, data )
 		end
 		return true
 	end
 	if (iname == self.fire2 and value == 1) then
 		if (self.armed) then
-			GC_FireShell( self.vectorchange , self.speed , self.damage2 , self.perice2 , self.ammomodel , self.smoking , self.Owner, self.Entity , 2, self.cont2 )
+			GC_FireShell( self.vectorchange , self.speed , self.damage2 , self.perice2 , self.ammomodel , self.smoking , self.Owner, self.Entity , 2, self.cont2, self.radius2 )
+			local data = EffectData()
+				data:SetOrigin(self.Entity:GetPos() +  self.Entity:GetUp() * 50)
+				data:SetNormal( self:GetUp() )
+			local effect = "cannon_flare"
+			util.Effect(effect, data )
 		end
 		return true
 	end

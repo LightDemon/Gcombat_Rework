@@ -276,7 +276,7 @@ end
 
 cbt_hitangle = gcombat.hitangle
 
-function GC_FireShell( Vector , Speed , Damage , Perice , AmmoModel , Smoking , Own , Self , Type, Count, Data )
+function GC_FireShell( Vector , Speed , Damage , Perice , AmmoModel , Smoking , Own , Self , Type, Count, Radius)
 		local ent = ents.Create( "base_shell_entity" )
 		ent:SetPos( Self:GetPos() +  Self:GetUp() * 60)
 		ent:SetAngles( Self:GetAngles() )
@@ -291,6 +291,7 @@ function GC_FireShell( Vector , Speed , Damage , Perice , AmmoModel , Smoking , 
 		ent.attacktype = Type
 		ent.Owner = Own
 		ent.cont = Count
+		ent.radius = Radius
 		
 		ent:Spawn()
 		ent:Initialize()
@@ -308,11 +309,9 @@ function GC_FireShell( Vector , Speed , Damage , Perice , AmmoModel , Smoking , 
 				phys:AddVelocity( Self:GetUp() * -800 ) 
 			end
 		
-				util.Effect( Self.effect, Data )
+				
 				local maxtable = #Self.expl
-				Self:EmitSound(Self.expl[ math.random(1,maxtable) ] , 160, 130 ) 
-		
-		
+				Self:EmitSound(Self.expl[ math.random(1,maxtable) ] , 160, 130 ) 		
 end
 
 

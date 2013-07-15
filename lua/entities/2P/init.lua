@@ -40,11 +40,6 @@ function ENT:Initialize()
 		phys:SetMass( 20 ) 
 	end 
 	
-	self.effectdata = EffectData()
-		self.effectdata:SetOrigin(self.Entity:GetPos() +  self.Entity:GetUp() * 50)
-		self.effectdata:SetNormal( self.Entity:GetUp() )
-	self.effect = "cannon_flare"
-	
 	self.Inputs = Wire_CreateInputs( self.Entity, { self.fire1} ) --Create our wire inputs
 	self.Outputs = Wire_CreateOutputs( self.Entity, { "Can Fire" }) --Create our wire outputs
 	Wire_TriggerOutput(self.Entity, "Can Fire", 1)
@@ -60,20 +55,15 @@ function ENT:SpawnFunction( ply, tr)
 	return ent
 end
 
---[[function ENT:Think()
-	if (self.reloadtime > CurTime()) then
-		self.armed = false
-		Wire_TriggerOutput(self.Entity, "Can Fire", 0)
-	else
-		self.armed = true
-		Wire_TriggerOutput(self.Entity, "Can Fire", 1)
-	end
-end]]--
-
 function ENT:TriggerInput(iname, value)
 	if (iname == self.fire1 and value == 1) then
 		if (self.armed) then
-			GC_FireShell( self.vectorchange , self.speed , self.damage1 , self.perice1 , self.ammomodel , self.smoking , self.Owner, self.Entity , 1, self.cont1, self.effectdata  )
+			GC_FireShell( self.vectorchange , self.speed , self.damage1 , self.perice1 , self.ammomodel , self.smoking , self.Owner, self.Entity , 1, self.cont1)
+			local data = EffectData() --Fire Effect
+				data:SetOrigin(self.Entity:GetPos() +  self.Entity:GetUp() * 50)
+				data:SetNormal( self.Entity:GetUp() )
+			local effect = "cannon_flare"
+			util.Effect(effect, data )
 		end
 	end
 	return true
