@@ -7,6 +7,8 @@ function ENT:Initialize()
 	self.reloaddelay = 2 --Amout of time to wait between reloads
 	self.fire1 = "Fire" --Name of the first fire input
 	--self.fire2 = "Fire HE round" --Name of second fire input
+	self.cont1 = 0
+	self.cont2 = 0
 	self.armed = true
 	self.vectorchange = Vector(0,0,-100)
 	self.speed = 7000
@@ -39,8 +41,8 @@ function ENT:Initialize()
 	end 
 	
 	self.effectdata = EffectData()
-		effectdata:SetOrigin(self.Entity:GetPos() +  self.Entity:GetUp() * 50)
-		effectdata:SetNormal( self:GetUp() )
+		self.effectdata:SetOrigin(self.Entity:GetPos() +  self.Entity:GetUp() * 50)
+		self.effectdata:SetNormal( self.Entity:GetUp() )
 	self.effect = "cannon_flare"
 	
 	self.Inputs = Wire_CreateInputs( self.Entity, { self.fire1} ) --Create our wire inputs
@@ -71,14 +73,8 @@ end]]--
 function ENT:TriggerInput(iname, value)
 	if (iname == self.fire1 and value == 1) then
 		if (self.armed) then
-			self.Entity:fireAPshell()
+			GC_FireShell( self.vectorchange , self.speed , self.damage1 , self.perice1 , self.ammomodel , self.smoking , self.Owner, self.Entity , 1, self.cont1, self.effectdata  )
 		end
-		return true
 	end
-	--[[if (iname == self.fire2 and value == 1) then
-		if (self.reloadtime < CurTime()) then
-			self.Entity:fireHEshell()
-		end
-		return true
-	end]]--
+	return true
 end

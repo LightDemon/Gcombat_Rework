@@ -1,5 +1,5 @@
  ENT.Type = "anim"  
- ENT.Base = "base_cannon_entity"     
+ ENT.Base = "base_gmodentity"    
  ENT.PrintName		= "Tank Gun"  
  ENT.Author			= "LightDemon"  
  ENT.Contact			= "LightDemon"  

@@ -275,3 +275,47 @@ function gcombat.hitangle( Normal, HitNormal)
 end
 
 cbt_hitangle = gcombat.hitangle
+
+function GC_FireShell( Vector , Speed , Damage , Perice , AmmoModel , Smoking , Own , Self , Type, Count, Data )
+		local ent = ents.Create( "base_shell_entity" )
+		ent:SetPos( Self:GetPos() +  Self:GetUp() * 60)
+		ent:SetAngles( Self:GetAngles() )
+		
+		
+		ent.vectorchange = Vector 
+		ent.speed = Speed
+		ent.damage =  Damage 
+		ent.perice = Perice
+		ent.model = AmmoModel
+		ent.smoking = Smoking
+		ent.attacktype = Type
+		ent.Owner = Own
+		ent.cont = Count
+		
+		ent:Spawn()
+		ent:Initialize()
+		ent:Activate()
+		Self.armed = false
+		local function time()
+			Wire_TriggerOutput(Self, "Can Fire", 1)
+			Self.armed = true
+		end
+		Wire_TriggerOutput(Self, "Can Fire", 0)
+		timer.Simple(Self.reloaddelay, time)
+		
+		local phys = Self:GetPhysicsObject()  	
+			if (phys:IsValid()) then  		
+				phys:AddVelocity( Self:GetUp() * -800 ) 
+			end
+		
+				util.Effect( Self.effect, Data )
+				local maxtable = #Self.expl
+				Self:EmitSound(Self.expl[ math.random(1,maxtable) ] , 160, 130 ) 
+		
+		
+end
+
+
+
+
+
