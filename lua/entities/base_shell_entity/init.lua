@@ -79,9 +79,9 @@ function ENT:StartTouch(ent)
 		self.attack = 0 
 		else
 			if self.attacktype == 1 then
-				self.attack = cbt_dealhcghit( ent, self.damage1, self.perice, tr.HitPos, tr.HitPos)
+				self.attack = cbt_dealhcghit( ent, self.damage, self.perice, tr.HitPos, tr.HitPos)
 			elseif self.attacktype == 2 then
-				self.attack = cbt_hcgexplode( self.Entity:GetPos(), self.radius, self.damage2,  self.perice2, tr.HitPos)
+				self.attack = cbt_hcgexplode( self.Entity:GetPos(), self.radius, self.damage,  self.perice, tr.HitPos)
 		end
 	end
 	
