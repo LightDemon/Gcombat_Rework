@@ -154,7 +154,7 @@ function gcombat.hcgexplode( position, radius, damage, pierce, trace)
 		local tracedata = {}
 		tracedata.start = position
 		tracedata.endpos = i:LocalToWorld( i:OBBCenter( ) )
-		tracedata.filter = tooclose
+		--tracedata.filter = tooclose
 		tracedata.mask = MASK_SOLID
 		local trace = util.TraceLine(tracedata) 
 		
@@ -314,7 +314,45 @@ function GC_FireShell( Vector , Speed , Damage , Perice , AmmoModel , Smoking , 
 				Self:EmitSound(Self.expl[ math.random(1,maxtable) ] , 160, 130 ) 		
 end
 
-
+function GC_FireMissile( Vector , Speed , Damage , Perice , AmmoModel , Fuel , Acell, Own , Self , Type , Radius , Range , Cone , Track , Ttime)
+		local ent = ents.Create( "base_missile_entity" )
+		ent:SetPos( Self:GetPos() +  Self:GetUp() * 60)
+		ent:SetAngles( Self:GetAngles() )
+		
+		
+		ent.vectorchange = Vector 
+		ent.speed = Speed
+		ent.damage =  Damage 
+		ent.perice = Perice
+		ent.model = AmmoModel
+		ent.fuel = Fuel
+		ent.acell = Acell
+		ent.Owner = Own
+		ent.attacktype = Type
+		ent.radius = Radius
+		ent.range = Range
+		ent.cone = Cone
+		ent.track = Track
+		ent.ttime = Ttime
+		
+		
+		
+		ent:Spawn()
+		ent:Initialize()
+		ent:Activate()
+		Self.armed = false
+		local function time()
+			Wire_TriggerOutput(Self, "Can Fire", 1)
+			Self.armed = true
+		end
+		Wire_TriggerOutput(Self, "Can Fire", 0)
+		timer.Simple(Self.reloaddelay, time)
+		
+		local phys = Self:GetPhysicsObject()  	
+			if (phys:IsValid()) then  		
+				phys:AddVelocity( Self:GetUp() * -800 ) 
+			end				
+end
 
 
 

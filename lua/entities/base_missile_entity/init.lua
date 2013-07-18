@@ -2,6 +2,15 @@ AddCSLuaFile( "shared.lua" )
 AddCSLuaFile("cl_init.lua")
 include('shared.lua')
 
+local seekable = {
+gmod_thruster = true,
+prop_vehicle_airboat = true,
+prop_vehicle_jeep = true,
+gmod_hoverball = true,
+malawar_repulsor = true,
+prop_physics = true
+}
+
 function ENT:Initialize()  
 
 	self.exploded = false
@@ -18,26 +27,19 @@ function ENT:Initialize()
 	self.Entity:SetCollisionGroup(COLLISION_GROUP_PROJECTILE)
 	self.Randomness = math.random(3,9)/10;
 	self.AntiRandomness = 1-self.Randomness;
-	
-	self.Phys = self.Entity:GetPhysicsObject()
-	if(self.Phys and self.Phys:IsValid()) then
-		self.Phys:Wake()
-		self.Phys:EnableGravity(true)
-        self.Phys:EnableDrag(true)
-        self.Phys:EnableCollisions(true)
+	self.CurrentVelocity = 2000
+	self.phys = self.Entity:GetPhysicsObject()
+	if(self.phys:IsValid()) then
+		self.phys:Wake()
+		self.phys:SetMass(20)
+		self.phys:EnableGravity(false);
+		self.phys:EnableDrag(false);
+		self.phys:EnableCollisions(true);
 	end
 
-	if (self.smoking == false) then
-		self.smoking = true
-	
-		self.FireTrail = ents.Create("env_fire_trail")
-		self.FireTrail:SetKeyValue("spawnrate","3")
-		self.FireTrail:SetKeyValue("firesprite","sprites/firetrail.spr" )
-		self.FireTrail:SetPos(self.Entity:GetPos())
-		self.FireTrail:SetParent(self.Entity)
-		self.FireTrail:Spawn()
-		self.FireTrail:Activate()
-	end 
+	self.Sound = CreateSound( self.Entity, Sound( "weapons/rpg/rocket1.wav" ) ) 
+ 	self.Sound:Play()
+	self.tracktime = CurTime() + self.ttime
 end   
 
 function ENT:PhysicsUpdate(phys,deltatime)
@@ -45,47 +47,64 @@ function ENT:PhysicsUpdate(phys,deltatime)
 	if((self.LastPhysicsUpdate or 0) + 0.07 >= time) then return end;
 	
 	self.LastPhysicsUpdate = time;
-	if(self.Fuel > 0  then
-		self.Fuel = self.Fuel-1; 
+	if(self.fuel > 0)  then
+		self.fuel = self.fuel-1; 
 		local pos = self.Entity:GetPos();
-		if(self.CurrentVelocity < self.MaxVelocity) then
-			self.CurrentVelocity = math.Clamp(self.CurrentVelocity*self.Acell,self.CurrentVelocity,self.MaxVelocity);
+		if(self.CurrentVelocity < self.speed) then
+			self.CurrentVelocity = math.Clamp(self.CurrentVelocity*self.acell,self.CurrentVelocity,self.speed);
 		end
-			self.Direction = self.Entity:GetForward()*self.CurrentVelocity;
-			if(self.CanTrack and time > self.TrackTime) then
-				local track = ents.FindInCone(self.Entity:GetPos(),self.Entity:GetPos()+self.Entity:GetUp():Normalize,self.range,self.cone)
-				self.Target = track[1]
-				local dir = self.Target-pos;
-				local range = dir:Length();
-				dir:Normalize();
-				if(range > 250) then
-					self.Direction = (dir*self.Randomness+self.Entity:GetVelocity():GetNormalized()*self.AntiRandomness)*self.CurrentVelocity;
-				else
+		self.Direction = self.Entity:GetUp()*self.CurrentVelocity;
+		phys:SetVelocity(self.Direction);
+		
+		if(self.track and time > self.tracktime) then
+			local targets = ents.FindInCone(self.Entity:GetPos()+self.Entity:GetUp()*200,self.Entity:GetPos()+self.Entity:GetUp():GetNormalized(),self.range,self.cone)
+					for _,v in pairs(targets) do
+						if(v and v:IsValid() and v != self.Entity) then
+							self.target = v
+							self.target:SetColor(255,0,0,255)
+						end
+					end	
+				if self.target != nil then
+					cls = self.target:GetClass()
+					if seekable[cls] then
+							
+							local dir = self.target:GetPos()-pos;
+							local range = dir:Length();
+							--dir:Normalize();
+							--if(range > 250) then
+								--self.Direction = (dir*self.Randomness+self.Entity:GetVelocity():GetNormalized()*self.AntiRandomness)*self.CurrentVelocity;
+							--else
 				
-					self.Direction = dir*self.CurrentVelocity;
-					if(range < 100) then 
-						self.Entity:StartTouch(self.target)
+								self.Direction = dir:GetNormalized()*(self.CurrentVelocity*.2);
+								phys:SetVelocity(self.Direction);
+								phys:SetAngles(dir:Angle())
+							--end
+					
+							--[[local t={
+							secondstoarrive = 1,
+							pos = pos+self.Direction,
+							maxangular = 50000,
+							maxangulardamp = 100,
+							maxspeed = 100000,
+							maxspeeddamp = 10000,
+							dampfactor = 0.8,
+							teleportdistance = 7000,
+							angle = self.Entity:GetAngles(), --dir:Angle(),
+							deltatime = deltatime,
+							}
+							phys:ComputeShadowControl(t);	]]--
+			
+					else
+						phys:SetVelocity(self.Direction);
 					end
+				else
+					phys:SetVelocity(self.Direction);
 				end
-			end
-		
-		
-		
-		local t={
-				secondstoarrive = 1,
-				pos = pos+self.Direction,
-				maxangular = 50000,
-				maxangulardamp = 100,
-				maxspeed = 100000000,
-				maxspeeddamp = 10000,
-				dampfactor = 0.2,
-				teleportdistance = 7000,
-				angle = dir:Angle(),
-				deltatime = deltatime,
-			}
-			phys:ComputeShadowControl(t);
-		
+		else
+			phys:SetVelocity(self.Direction);
+		end
 	else
+		self.Entity:Blow()
 		
 	end
 
@@ -102,14 +121,15 @@ function ENT:StartTouch(ent)
 		effectdata:SetStart(self.Entity:GetPos())
 		util.Effect( "Explosion", effectdata )
 		self.exploded = true
+		util.BlastDamage(self.Entity, self.Entity, self.Entity:GetPos(), 100, 50)
 		self.Entity:Remove()
 		return
 	end
 	
 	
 			
-				self.attack = cbt_dealhcghit( ent, self.damage, self.perice, tr.HitPos, tr.HitPos)
-			
+				self.attack = cbt_hcgexplode( self.Entity:GetPos(), self.radius, self.damage, self.perice, tr.HitPos)
+						--position, radius, damage, pierce, trace
 		
 	
 	
@@ -144,8 +164,23 @@ function ENT:PhysicsCollide(data)
 	end
 end
 
+function ENT:Blow()
+
+local effectdata = EffectData()
+		effectdata:SetOrigin(self.Entity:GetPos())
+		effectdata:SetStart(self.Entity:GetPos())
+		util.Effect( "Explosion", effectdata )
+		self.exploded = true
+		util.BlastDamage(self.Entity, self.Entity, self.Entity:GetPos(), 100, 50)
+		self.Entity:Remove()
+
+end
+
 function ENT:OnRemove()
-	
+	if self.target and self.target:IsValid() then
+		self.target:SetColor(255,255,255,255)
+	end
+	self.Sound:Stop()
 	if self.FireTrail then
 		self.FireTrail:Remove()
 	end
