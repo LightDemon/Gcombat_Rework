@@ -2,15 +2,6 @@ AddCSLuaFile( "shared.lua" )
 AddCSLuaFile("cl_init.lua")
 include('shared.lua')
 
-local seekable = {
-gmod_thruster = true,
-prop_vehicle_airboat = true,
-prop_vehicle_jeep = true,
-gmod_hoverball = true,
-malawar_repulsor = true,
-prop_physics = true
-}
-
 function ENT:Initialize()  
 
 	self.exploded = false
@@ -54,49 +45,48 @@ function ENT:PhysicsUpdate(phys,deltatime)
 			self.CurrentVelocity = math.Clamp(self.CurrentVelocity*self.acell,self.CurrentVelocity,self.speed);
 		end
 		self.Direction = self.Entity:GetUp()*self.CurrentVelocity;
-		phys:SetVelocity(self.Direction);
+		--phys:SetVelocity(self.Direction);
 		
 		if(self.track and time > self.tracktime) then
-			local targets = ents.FindInCone(self.Entity:GetPos()+self.Entity:GetUp()*200,self.Entity:GetPos()+self.Entity:GetUp():GetNormalized(),self.range,self.cone)
+			local targets = ents.FindInCone(self.Entity:GetPos(),self.Entity:GetForward():GetNormalized(),self.range,self.cone)
+				print("tracking")
 					for _,v in pairs(targets) do
-						if(v and v:IsValid() and v != self.Entity) then
-							self.target = v
-							self.target:SetColor(255,0,0,255)
+						if(v and v:IsValid() and not v == self.Entity) then
+								self.target = v
+								self.target:SetColor(255,0,0,255)
 						end
 					end	
 				if self.target != nil then
-					cls = self.target:GetClass()
-					if seekable[cls] then
-							
+							print("Found Target")
 							local dir = self.target:GetPos()-pos;
 							local range = dir:Length();
-							--dir:Normalize();
-							--if(range > 250) then
-								--self.Direction = (dir*self.Randomness+self.Entity:GetVelocity():GetNormalized()*self.AntiRandomness)*self.CurrentVelocity;
-							--else
+							dir:Normalize();
+							if(range > 250) then
+								self.Direction = (dir*self.Randomness+self.Entity:GetVelocity():GetNormalized()*self.AntiRandomness)*self.CurrentVelocity;
+							else
 				
-								self.Direction = dir:GetNormalized()*(self.CurrentVelocity*.2);
-								phys:SetVelocity(self.Direction);
-								phys:SetAngles(dir:Angle())
-							--end
+								self.Direction = dir*(self.CurrentVelocity);
+								
+								--phys:SetVelocity(self.Direction);
+								--phys:SetAngles(dir:Angle() + Angle(90,0,0))
+								if(range < 100) then
+									self:StartTouch(self.target)
+								end
+							end
 					
-							--[[local t={
+							local t={
 							secondstoarrive = 1,
 							pos = pos+self.Direction,
 							maxangular = 50000,
-							maxangulardamp = 100,
+							maxangulardamp = 1000,
 							maxspeed = 100000,
-							maxspeeddamp = 10000,
-							dampfactor = 0.8,
+							maxspeeddamp = 12000,
+							dampfactor = 0.2,
 							teleportdistance = 7000,
-							angle = self.Entity:GetAngles(), --dir:Angle(),
+							angle = dir:Angle(),
 							deltatime = deltatime,
 							}
-							phys:ComputeShadowControl(t);	]]--
-			
-					else
-						phys:SetVelocity(self.Direction);
-					end
+							phys:ComputeShadowControl(t);
 				else
 					phys:SetVelocity(self.Direction);
 				end
@@ -147,7 +137,7 @@ function ENT:StartTouch(ent)
 		brokedshell:Fire("Kill", "", 10)
 		local phys = brokedshell:GetPhysicsObject()  	
 		if (phys:IsValid()) then  
-			phys:SetVelocity(self.flightvector * 10000)
+			phys:SetVelocity(self.Direction * 10000)
 		end
 	elseif (self.attack == 1) then
 		util.BlastDamage(self.Entity, self.Entity, self.Entity:GetPos(), 100, 50)
