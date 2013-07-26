@@ -48,21 +48,26 @@ function ENT:PhysicsUpdate(phys,deltatime)
 		--phys:SetVelocity(self.Direction);
 		
 		if(self.track and time > self.tracktime) then
-			local targets = ents.FindInCone(self.Entity:GetPos(),self.Entity:GetForward():GetNormalized(),self.range,self.cone)
+			local targets = ents.FindInCone(self.Entity:GetPos(),self.Entity:GetUp():GetNormalized(),self.range,self.cone)
 				print("tracking")
+				if targets then
 					for _,v in pairs(targets) do
-						if(v and v:IsValid() and not v == self.Entity) then
+						if(v and v:IsValid() and v != self.Entity and v:GetClass() == "prop_physics") then
+							if self.target and v != self.target then
+								self.target:SetColor(255,255,255,255)
+							end	
 								self.target = v
-								self.target:SetColor(255,0,0,255)
+								self.target:SetColor(255,0,0,255)	
 						end
-					end	
-				if self.target != nil then
+						if self.target != nil then
 							print("Found Target")
 							local dir = self.target:GetPos()-pos;
 							local range = dir:Length();
 							dir:Normalize();
 							if(range > 250) then
 								self.Direction = (dir*self.Randomness+self.Entity:GetVelocity():GetNormalized()*self.AntiRandomness)*self.CurrentVelocity;
+								--phys:SetVelocity(self.Direction);
+								--phys:SetAngles(dir:Angle() + Angle(90,0,0))
 							else
 				
 								self.Direction = dir*(self.CurrentVelocity);
@@ -73,23 +78,29 @@ function ENT:PhysicsUpdate(phys,deltatime)
 									self:StartTouch(self.target)
 								end
 							end
-					
+						
 							local t={
-							secondstoarrive = 1,
+							secondstoarrive = 2,
 							pos = pos+self.Direction,
-							maxangular = 50000,
-							maxangulardamp = 1000,
+							maxangular = 3000,
+							maxangulardamp = 2000,
 							maxspeed = 100000,
 							maxspeeddamp = 12000,
-							dampfactor = 0.2,
-							teleportdistance = 7000,
-							angle = dir:Angle(),
+							dampfactor = .8,
+							teleportdistance = 700000,
+							angle = (self.target:GetPos()-pos):Angle() + Angle(90,0,0),
 							deltatime = deltatime,
 							}
 							phys:ComputeShadowControl(t);
+						else
+							phys:SetVelocity(self.Direction);
+						end
+								
+					end	
 				else
 					phys:SetVelocity(self.Direction);
 				end
+				
 		else
 			phys:SetVelocity(self.Direction);
 		end

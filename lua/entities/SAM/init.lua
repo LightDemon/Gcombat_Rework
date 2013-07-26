@@ -10,12 +10,12 @@ function ENT:Initialize()
 	self.fuel = 1000 --how long the missile flies
 	self.acell = 2 -- how fast the missile accelrates after launch
 	self.track = true --is this a missile or a rocket
-	self.ttime = 2 --time to fly befor tracking starts
-	self.cone = 30 --field of tracking vision
-	self.range = 1000 --max tracking distance
+	self.ttime = 2  --time to fly befor tracking starts
+	self.cone = 20 --field of tracking vision
+	self.range = 10000 --max tracking distance
 	self.armed = true
 	self.vectorchange = Vector(0,0,-90)
-	self.speed = 10000 --Max speed
+	self.speed = 5000 --Max speed
 	self.anglechange = Angle(90,0,0)
 	self.damage = 1000 --Base damage of shell
 	self.perice = 7 -- Base perice chance of shell
