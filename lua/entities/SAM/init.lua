@@ -8,9 +8,9 @@ function ENT:Initialize()
 	self.fire1 = "Fire" --Name of the first fire input
 	
 	self.fuel = 1000 --how long the missile flies
-	self.acell = 2 -- how fast the missile accelrates after launch
+	self.acell = 5 -- how fast the missile accelrates after launch
 	self.track = true --is this a missile or a rocket
-	self.ttime = 2  --time to fly befor tracking starts
+	self.ttime = .5  --time to fly befor tracking starts
 	self.cone = 20 --field of tracking vision
 	self.range = 10000 --max tracking distance
 	self.armed = true
@@ -22,13 +22,13 @@ function ENT:Initialize()
 	self.radius = 200 --stay over 100 because we explode when we reach 100 and you will do very little damage if you only have a range of 100
 	self.attacktype = 1 --Creating attack type check so the shell knows what to do
 	self.smoking = false --to smoke or not to smoke, that is a question.
-	self.Entity:SetModel( "models/props_c17/canister_propane01a.mdl" ) 	--Model the cannon will use
+	self.Entity:SetModel( "models/combatmodels/tank_gun.mdl" ) 	--Model the cannon will use
 	math.randomseed(CurTime()) --It's sonic, Totally sonic.
 	self.infire = false --Are we fireing?
 	
 	self.Entity:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,  	
 	self.Entity:SetMoveType( MOVETYPE_VPHYSICS )   --after all, gmod is a physics  	
-	self.Entity:SetSolid( SOLID_VPHYSICS )        -- Toolbox    
+	self.Entity:SetSolid( SOLID_VPHYSICS )        -- chessecacke    
 	
 	
           

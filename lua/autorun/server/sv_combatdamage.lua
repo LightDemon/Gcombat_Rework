@@ -314,13 +314,13 @@ function GC_FireShell( Vector , Speed , Damage , Perice , AmmoModel , Smoking , 
 				Self:EmitSound(Self.expl[ math.random(1,maxtable) ] , 160, 130 ) 		
 end
 
-function GC_FireMissile( Vector , Speed , Damage , Perice , AmmoModel , Fuel , Acell, Own , Self , Type , Radius , Range , Cone , Track , Ttime)
+function GC_FireMissile( vector2 , Speed , Damage , Perice , AmmoModel , Fuel , Acell, Own , Self , Type , Radius , Range , Cone , Track , Ttime)
 		local ent = ents.Create( "base_missile_entity" )
-		ent:SetPos( Self:GetPos() +  Self:GetUp() * 60)
+		ent:SetPos( Self:GetPos())
 		ent:SetAngles( Self:GetAngles() )
 		
 		
-		ent.vectorchange = Vector 
+		ent.vectorchange = vector2 
 		ent.speed = Speed
 		ent.damage =  Damage 
 		ent.perice = Perice

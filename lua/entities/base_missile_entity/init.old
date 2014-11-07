@@ -21,14 +21,13 @@ function ENT:Initialize()
 	self.CurrentVelocity = 2000
 	self.phys = self.Entity:GetPhysicsObject()
 	self.target = nil
-	self.lock = nil
 	if(self.phys:IsValid()) then
 		self.phys:Wake()
 		self.phys:SetMass(20)
 		self.phys:EnableGravity(false);
 		self.phys:EnableDrag(false);
-		self.phys:EnableCollisions(false);
-		self.phys:SetVelocity(self.Entity:GetPos()*self.Entity:GetUp()*2000);
+		self.phys:EnableCollisions(true);
+		self.phys:SetVelocity(self.CurrentVelocity);
 	end
 
 	self.Sound = CreateSound( self.Entity, Sound( "weapons/rpg/rocket1.wav" ) ) 
@@ -51,34 +50,21 @@ function ENT:PhysicsUpdate(phys,deltatime)
 		--phys:SetVelocity(self.Direction);
 		
 		if(self.track and time > self.tracktime) then
-			self.phys:EnableCollisions(true);
-			if not self.target or self.target == nil or !self.target:IsValid() then
+			if !self.target:IsValid() then
 				print("tracking")
 				local targets = ents.FindInCone(self.Entity:GetPos(),self.Entity:GetUp():GetNormalized(),self.range,self.cone)
 				for _,v in pairs(targets) do
 					if(v and v:IsValid() and v != self.Entity and v:GetClass() == "prop_physics") then
-						self.lock = v
-						print("Have lock")
-						break
-					end
-				
-				end
-				
-				--targets = table.GetFirstValue( targets ) 
-			--	for _,v in pairs(targets) do
-				--if(v and v:IsValid() and v != self.Entity and v:GetClass() == "prop_physics") then
-				if(self.lock and self.lock:IsValid() and self.lock != self.Entity and self.lock:GetClass() == "prop_physics") then
-						--if self.target and v != self.target then
-							--self.target:SetColor(255,255,255,255)
-						--end	
-						self.target = self.lock
-							--self.target = v
+						if self.target and v != self.target then
+							self.target:SetColor(255,255,255,255)
+						end	
+							self.target = v
 							self.target:SetColor(255,0,0,255)	
 					end
-				--end
+				end
 			end
 			
-			if self.target and self.target != nil  then
+			if self.target != nil and self.target then
 				print("Found Target")
 				local dir = self.target:GetPos()-pos;
 				local range = dir:Length();
