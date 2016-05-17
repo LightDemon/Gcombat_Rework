@@ -1,5 +1,8 @@
+AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
-AddCSLuaFile("cl_init.lua")
+AddCSLuaFile()
+DEFINE_BASECLASS( "base_wire_entity" )
+--include('entities/base_wire_entity/init.lua')
 include('shared.lua')
 
 function ENT:Initialize()  
@@ -34,6 +37,7 @@ function ENT:Initialize()
 	self.Sound = CreateSound( self.Entity, Sound( "weapons/rpg/rocket1.wav" ) ) 
  	self.Sound:Play()
 	self.tracktime = CurTime() + self.ttime
+	self.timerRunning = false
 end   
 
 function ENT:PhysicsUpdate(phys,deltatime)
@@ -52,62 +56,43 @@ function ENT:PhysicsUpdate(phys,deltatime)
 		
 		if(self.track and time > self.tracktime) then
 			self.phys:EnableCollisions(true);
-			if not self.target or self.target == nil or !self.target:IsValid() then
-				print("tracking")
-				local targets = ents.FindInCone(self.Entity:GetPos(),self.Entity:GetUp():GetNormalized(),self.range,self.cone)
-				for _,v in pairs(targets) do
-					if(v and v:IsValid() and v != self.Entity and v:GetClass() == "prop_physics") then
-						self.lock = v
-						print("Have lock")
-						break
-					end
+			
+				self.target = self.Entity:FindNearestTarget(self.Entity:GetPos(),self.Entity:GetUp(), self.range, self.cone)
 				
-				end
-				
-				--targets = table.GetFirstValue( targets ) 
-			--	for _,v in pairs(targets) do
-				--if(v and v:IsValid() and v != self.Entity and v:GetClass() == "prop_physics") then
-				if(self.lock and self.lock:IsValid() and self.lock != self.Entity and self.lock:GetClass() == "prop_physics") then
-						--if self.target and v != self.target then
-							--self.target:SetColor(255,255,255,255)
-						--end	
-						self.target = self.lock
-							--self.target = v
-							self.target:SetColor(255,0,0,255)	
-					end
-				--end
-			end
 			
 			if self.target and self.target != nil  then
 				print("Found Target")
 				local dir = self.target:GetPos()-pos;
 				local range = dir:Length();
-				dir:Normalize();
+				local normdir = dir:GetNormal();
 				if(range > 250) then
-					self.Direction = (dir*self.Randomness+self.Entity:GetVelocity():GetNormalized()*self.AntiRandomness)*self.CurrentVelocity;
+					self.Direction = (normdir*self.Randomness+self.Entity:GetVelocity():GetNormalized()*self.AntiRandomness)*self.CurrentVelocity;
 					--phys:SetVelocity(self.Direction);
 					--phys:SetAngles(dir:Angle() + Angle(90,0,0))
 				else
-					self.Direction = dir*(self.CurrentVelocity);
+					self.Direction = normdir*(self.CurrentVelocity);
 					--phys:SetVelocity(self.Direction);
 					--phys:SetAngles(dir:Angle() + Angle(90,0,0))
 					if(range < 100) then
 						self:StartTouch(self.target)
 					end
 				end
+				
+					local angleTest = dir:Angle()
 						
 				local t={
 							secondstoarrive = 2,
 							pos = pos+self.Direction,
 							maxangular = 3000,
-							maxangulardamp = 2000,
+							maxangulardamp = 10000,
 							maxspeed = 100000,
 							maxspeeddamp = 12000,
-							dampfactor = .8,
+							dampfactor = .5,
 							teleportdistance = 700000,
-							angle = (self.target:GetPos()-pos):Angle() + Angle(90,0,0),
+							angle = normdir:Angle():Normalize(),
 							deltatime = deltatime,
 						}
+						
 					phys:ComputeShadowControl(t);
 			else
 				phys:SetVelocity(self.Direction);
@@ -198,4 +183,30 @@ function ENT:OnRemove()
 	if self.FireTrail then
 		self.FireTrail:Remove()
 	end
+end
+
+
+function ENT:FindNearestTarget(pos, dir,  range, cone)
+    print("Ran Find Target")
+	local lowrange = range;
+    local nearestEnt;
+	local entlist =  cbt_findincone(pos,dir,range,cone)
+	--local tableString = table.ToString(entlist)
+	--print(tableString)
+	
+	for _, entity in pairs( entlist ) do
+        print("Ran For Loop")
+        local distance = pos:Distance( entity:GetPos() );
+        if( entity and entity:IsValid() and entity != self.Entity and entity:GetClass() == "prop_physics" and distance <= lowrange ) then
+            
+            nearestEnt = entity;
+            lowrange = distance;
+			--print("entity found")
+            
+        end
+        
+    end
+    
+    return nearestEnt;
+    
 end

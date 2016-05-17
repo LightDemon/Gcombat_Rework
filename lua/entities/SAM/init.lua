@@ -1,6 +1,8 @@
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
-include('entities/base_wire_entity/init.lua')
+AddCSLuaFile()
+DEFINE_BASECLASS( "base_wire_entity" )
+--include('entities/base_wire_entity/init.lua')
 include('shared.lua')
 function ENT:Initialize()   
 	self.ammomodel = "models/props_c17/canister01a.mdl" --Model the shell fired will use
@@ -10,9 +12,9 @@ function ENT:Initialize()
 	self.fuel = 1000 --how long the missile flies
 	self.acell = 5 -- how fast the missile accelrates after launch
 	self.track = true --is this a missile or a rocket
-	self.ttime = .5  --time to fly befor tracking starts
-	self.cone = 20 --field of tracking vision
-	self.range = 10000 --max tracking distance
+	self.ttime = .2  --time to fly befor tracking starts
+	self.cone = 5 --field of tracking vision
+	self.range = 1000 --max tracking distance
 	self.armed = true
 	self.vectorchange = Vector(0,0,-90)
 	self.speed = 5000 --Max speed

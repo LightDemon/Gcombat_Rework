@@ -237,15 +237,20 @@ cbt_repairarea = gcombat.repairarea
 --The built in FindinCone is bugged
 function gcombat.findincone(pos, dir, dist, ang) 
     local ent = ents.GetAll() 
+	local coneEnts = {}
     for k,v in pairs (ent) do 
         local targetVec = (v:GetPos() - pos):GetNormal()
-		local angle = math.acos(dir:DotProduct(targetVec))
+		local angle = math.abs(math.acos(dir:DotProduct(targetVec)))
 		local range = pos:Distance(v:GetPos())
-        if math.Rad2Deg(angle) > ang or range > dist then 
-            ent[k] = nil 
+        if math.deg(angle) <= ang or range <= dist then 
+            table.insert(coneEnts, v) 
         end 
     end 
-    return ent 
+	
+	local tableString = table.ToString(coneEnts)
+	print(tableString)
+	
+    return coneEnts 
 end 
 
 cbt_findincone = gcombat.findincone
