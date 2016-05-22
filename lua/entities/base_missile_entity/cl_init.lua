@@ -11,7 +11,7 @@
 local roll = math.Rand(-90,90)
 local normal = (self.Entity:GetForward() * -1):GetNormalized();
 local partical = ParticleEmitter( self.Entity:GetPos())
-local fx = partical:Add("sprites/heatwave",self.Entity:GetPos()+(self.Entity:GetUp()*-1)*60);
+local fx = partical:Add("sprites/heatwave",self.Entity:GetPos()+(self.Entity:GetUp()*-1)*20);
 			fx:SetVelocity(normal*2);
 			fx:SetDieTime(0.2);
 			fx:SetStartAlpha(255);
@@ -23,7 +23,7 @@ local fx = partical:Add("sprites/heatwave",self.Entity:GetPos()+(self.Entity:Get
 	
 
 	
-			local fx2 = partical:Add("effects/fire_cloud1",self.Entity:GetPos()+(self.Entity:GetUp()*-1)*60);
+			local fx2 = partical:Add("effects/fire_cloud1",self.Entity:GetPos()+(self.Entity:GetUp()*-1)*20);
 			fx2:SetVelocity(normal*2);
 			fx2:SetDieTime(0.1);
 			fx2:SetStartAlpha(255);

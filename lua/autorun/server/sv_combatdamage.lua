@@ -248,7 +248,7 @@ function gcombat.findincone(pos, dir, dist, ang)
     end 
 	
 	local tableString = table.ToString(coneEnts)
-	print(tableString)
+	
 	
     return coneEnts 
 end 
