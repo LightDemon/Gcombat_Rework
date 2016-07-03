@@ -1,6 +1,6 @@
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
-include('entities/base_wire_entity/init.lua')
+DEFINE_BASECLASS( "base_wire_entity" )
 include('shared.lua')
 function ENT:Initialize()   
 	self.ammomodel = "models/combatmodels/tankshell.mdl" --Model the shell fired will use

@@ -1,4 +1,5 @@
-local matRefract = Material( "models/spawn_effect" ) 
+--local matRefract = Material( "models/spawn_effect" ) 
+local matRefract = Material( "models/effects/comball_sphere" ) 
  local matLight	 = Material( "models/spawn_effect2" ) 
    
  /*--------------------------------------------------------- 
@@ -63,9 +64,9 @@ local matRefract = Material( "models/spawn_effect" )
  		 
  		// Draw our model with the Light material 
  		// This is the underlying blue effect and it doubles as the DX7 only effect 
- 		SetMaterialOverride( matLight ) 
- 			self.Entity:DrawModel() 
- 		SetMaterialOverride( 0 ) 
+ 		--SetMaterialOverride( matLight ) 
+ 			--self.Entity:DrawModel() 
+ 		--SetMaterialOverride( 0 ) 
  		 
  		// If our card is DX8 or above draw the refraction effect 
  		if ( render.GetDXLevel() >= 80 ) then 
@@ -73,7 +74,7 @@ local matRefract = Material( "models/spawn_effect" )
  			// Update the refraction texture with whatever is drawn right now 
  			render.UpdateRefractTexture() 
  			 
- 			matRefract:SetMaterialFloat( "$refractamount", Fraction ^ 3 ) 
+ 			--matRefract:SetMaterialFloat( "$refractamount", Fraction ^ 3 ) 
  		 
  			// Draw model with refraction texture 
  			SetMaterialOverride( matRefract ) 

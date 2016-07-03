@@ -24,16 +24,9 @@ function gcombat.devhit( entity, damage, pierce, src, dest)
 	local valid = gcombat.validate(entity)
 	if valid then
 		local armornum = pierce + math.random(0, 6)
-		local work = normal
-		local damnit = hitnormal
 		if armornum < entity.cbt.armor then return 0 end
-		--if trace != nil then
-		--local angle = work:DotProduct(damnit)
-			--if angle > -0.87 then
-				--	return 0 
-			--end
-		--end
-		if ((entity.cbt.health) < damage) then
+		
+		if ((entity.cbt.health) <= damage) then
 			if (entity.hasdamagecase == true) then
 				entity:gcbt_breakactions(damage, pierce)
 				return 1
@@ -142,27 +135,32 @@ end
 cbt_dealnrghit = gcombat.nrghit
 
 --this is how you do explosions, and is in here more as an example than anything else.
-function gcombat.hcgexplode( position, radius, damage, pierce, trace)
+function gcombat.hcgexplode( position, radius, damage, pierce)
 
 	local targets = ents.FindInSphere( position, radius)
-	local tooclose = ents.FindInSphere( position, 5)
+	local tooclose = ents.FindInSphere( position, 2)
 	
 	for _,i in pairs(targets) do
+		print("for loop")
+		if (i:IsWorld() || i:IsPlayer() || i:IsNPC() || string.find(i:GetClass(), "func_") == 1) then
+			return
+		end;
 		
+		print(i)
 		
 		
 		local tracedata = {}
 		tracedata.start = position
 		tracedata.endpos = i:LocalToWorld( i:OBBCenter( ) )
-		--tracedata.filter = tooclose
+		tracedata.filter = tooclose
 		tracedata.mask = MASK_SOLID
 		local trace = util.TraceLine(tracedata) 
 		
 		
 		
-		if trace.Entity == i then
+		if trace.Entity == i and not trace.HitSky then
 			local hitat = trace.HitPos
-			cbt_dealhcghit( i, damage, pierce, hitat, hitat, trace)
+			cbt_dealhcghit( i, damage, pierce, hitat, hitat)
 		end
 	end
 	
@@ -242,7 +240,7 @@ function gcombat.findincone(pos, dir, dist, ang)
         local targetVec = (v:GetPos() - pos):GetNormal()
 		local angle = math.abs(math.acos(dir:DotProduct(targetVec)))
 		local range = pos:Distance(v:GetPos())
-        if math.deg(angle) <= ang or range <= dist then 
+        if math.deg(angle) <= ang and range <= dist then 
             table.insert(coneEnts, v) 
         end 
     end 
@@ -314,14 +312,13 @@ function GC_FireShell( Vector , Speed , Damage , Perice , AmmoModel , Smoking , 
 				phys:AddVelocity( Self:GetUp() * -800 ) 
 			end
 		
-				
-				local maxtable = #Self.expl
-				Self:EmitSound(Self.expl[ math.random(1,maxtable) ] , 160, 130 ) 		
+		local maxtable = #Self.expl
+		Self:EmitSound(Self.expl[ math.random(1,maxtable) ] , 160, 130 ) 		
 end
 
 function GC_FireMissile( vector2 , Speed , Damage , Perice , AmmoModel , Fuel , Acell, Own , Self , Type , Radius , Range , Cone , Track , Ttime)
 		local ent = ents.Create( "base_missile_entity" )
-		ent:SetPos( Self:GetPos())
+		ent:SetPos( Self:GetPos() +  Self:GetUp() * 60)
 		ent:SetAngles( Self:GetAngles() )
 		
 		
@@ -339,8 +336,7 @@ function GC_FireMissile( vector2 , Speed , Damage , Perice , AmmoModel , Fuel , 
 		ent.cone = Cone
 		ent.track = Track
 		ent.ttime = Ttime
-		
-		
+		ent.parent = Self
 		
 		ent:Spawn()
 		ent:Initialize()

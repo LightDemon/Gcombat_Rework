@@ -10,22 +10,22 @@ function ENT:Initialize()
 	self.reloaddelay = 2 --Amout of time to wait between reloads
 	self.fire1 = "Fire" --Name of the first fire input
 	
-	self.fuel = 50 --how long the missile flies
-	self.acell = 200 -- how fast the missile accelrates after launch
+	self.fuel = 5000 --how long the missile flies
+	self.acell = 300 -- how fast the missile accelrates after launch
 	self.track = true --is this a missile or a rocket
 	self.ttime = .2  --time to fly befor tracking starts
-	self.cone = 5 --field of tracking vision
-	self.range = 1000 --max tracking distance
+	self.cone = 45 --field of tracking vision from center of missile
+	self.range = 4000 --max tracking distance
 	self.armed = true
 	self.vectorchange = Vector(0,0,-90)
-	self.speed = 10000 --Max speed
+	self.speed = 2000 --Max speed
 	self.anglechange = Angle(90,0,0)
-	self.damage = 1000 --Base damage of shell
-	self.perice = 7 -- Base perice chance of shell
-	self.radius = 400 --stay over 100 because we explode when we reach 100 and you will do very little damage if you only have a range of 100
+	self.damage = 1500 --Base damage of missile
+	self.perice = 7 -- Base perice chance of missile
+	self.radius = 1000 --stay over 100 because we explode when we reach 100 and you will do very little damage if you only have a range of 100
 	self.attacktype = 1 --Creating attack type check so the shell knows what to do
 	self.smoking = false --to smoke or not to smoke, that is a question.
-	self.Entity:SetModel( "models/combatmodels/tank_gun.mdl" ) 	--Model the cannon will use
+	self.Entity:SetModel( "models/props_c17/canister_propane01a.mdl" ) 	--Model the cannon will use
 	math.randomseed(CurTime()) --It's sonic, Totally sonic.
 	self.infire = false --Are we fireing?
 	

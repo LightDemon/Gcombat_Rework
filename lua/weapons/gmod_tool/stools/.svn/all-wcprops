@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/562/trunk/GCX/lua/weapons/gmod_tool/stools
+END
+wire_dir_target_finder.lua
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/318/trunk/GCX/lua/weapons/gmod_tool/stools/wire_dir_target_finder.lua
+END
+energyweapons.lua
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/332/trunk/GCX/lua/weapons/gmod_tool/stools/energyweapons.lua
+END
+kweapons.lua
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/562/trunk/GCX/lua/weapons/gmod_tool/stools/kweapons.lua
+END
+gcxenergy.lua
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/344/trunk/GCX/lua/weapons/gmod_tool/stools/gcxenergy.lua
+END
+weapon_razer.lua
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/214/trunk/GCX/lua/weapons/gmod_tool/stools/weapon_razer.lua
+END
+cannons.lua
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/345/trunk/GCX/lua/weapons/gmod_tool/stools/cannons.lua
+END
+bomb.lua
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/332/trunk/GCX/lua/weapons/gmod_tool/stools/bomb.lua
+END
