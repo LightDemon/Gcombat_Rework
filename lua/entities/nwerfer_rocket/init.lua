@@ -90,7 +90,6 @@ end
 		if (physx:IsValid()) then  		
 			physx:ApplyForceCenter( self.Entity:GetUp() * 30000)  	
 		end 
-		self.Entity:NextThink( CurTime() )
 		return true
 	end
  end
