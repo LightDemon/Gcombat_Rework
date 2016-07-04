@@ -10,7 +10,7 @@ function ENT:Initialize()
 	self.reloaddelay = 2 --Amout of time to wait between reloads
 	self.fire1 = "Fire" --Name of the first fire input
 	
-	self.fuel = 5000 --how long the missile flies
+	self.fuel = 200 --how long the missile flies
 	self.acell = 300 -- how fast the missile accelrates after launch
 	self.track = true --is this a missile or a rocket
 	self.ttime = .2  --time to fly befor tracking starts

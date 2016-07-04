@@ -1,8 +1,5 @@
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
-AddCSLuaFile()
-DEFINE_BASECLASS( "base_wire_entity" )
---include('entities/base_wire_entity/init.lua')
 include('shared.lua')
 
 function ENT:Initialize()  
@@ -47,28 +44,36 @@ function ENT:PhysicsUpdate(phys,deltatime)
 	self.LastPhysicsUpdate = time;
 	
 	if(self.fuel > 0)  then
-		--print(self.CurrentVelocity)
 		self.fuel = self.fuel-1; 
 		local pos = self.Entity:GetPos();
 		if(self.CurrentVelocity < self.speed) then
 			self.CurrentVelocity = math.Clamp(self.CurrentVelocity+self.acell,0,self.speed);
 		end;
 		self.Direction = self.Entity:GetUp()*self.CurrentVelocity;
-		--phys:SetVelocity(self.Direction);
 		
 		if(self.track and time > self.tracktime) then
 			self.phys:EnableCollisions(true);
-				
-				--if not self.target or self.target == nil then
-				self.target = self.Entity:FindNearestTarget(self.Entity:GetPos(),self.Entity:GetUp(), self.range, self.cone);
-				--end
+			
+					--Look at ways to check the angle to the target and select a new target with target is out of vision cone +angle(90,0,0)
+				if not self.target or self.target == nil then
+					self.target = self.Entity:FindNearestTarget(self.Entity:GetPos(),self.Entity:GetUp(), self.range, self.cone);
+				end
 			
 			if self.target and self.target != nil  then
 				local dir = self.target:GetPos()-pos;
 				local range = dir:Length();
-				local normdir = dir:GetNormal();
+				local targetAngle = dir:Angle() + self.parent.anglechange;  --add angle change from parent cannon to deal with shell models that dont spawn pointing up
+				local targetVec = (self.target:GetPos() - pos):GetNormal()
+				local angle = math.abs(math.acos(self.Entity:GetUp():DotProduct(targetVec)))
+				
+				if math.deg(angle) > self.cone then 
+					self.target = nil 
+					print("No Target")
+					return 
+				end
+				
 				if(range > 350) then
-					self.Direction = (dir:GetNormalized()*self.Randomness+self.Entity:GetVelocity():GetNormalized()*self.AntiRandomness)*self.CurrentVelocity;
+					self.Direction = (dir:GetNormalized()*self.Randomness+self.Entity:GetVelocity():GetNormalized()*self.AntiRandomness)*self.CurrentVelocity; --Flight system from Avon
 					
 				else
 					self.Direction = dir*(self.CurrentVelocity);
@@ -88,7 +93,7 @@ function ENT:PhysicsUpdate(phys,deltatime)
 							maxspeeddamp = 1000000,
 							dampfactor = 0.2,
 							teleportdistance = 0,
-							angle = dir:Angle()+ self.parent.anglechange,
+							angle = targetAngle,
 							deltatime = deltatime,
 						}
 						
@@ -117,7 +122,6 @@ function ENT:StartTouch(ent)
 	end;
 	
 	self.attack = cbt_fragcone( self.Entity:GetPos(), self.Entity:GetVelocity():GetNormalized(), self.radius, 180, self.damage, self.perice);
-	--position, radius, damage, pierce, trace
 	
 	self.Entity:Blow();
 end

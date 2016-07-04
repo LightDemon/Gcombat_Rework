@@ -2,7 +2,7 @@
  local matLight	 = Material( "white_outline" )
    
    local matLight2			= Material( "sprites/splodesprite" )
-   
+   local matLight3	 = Material( "Models/effects/vol_light001" )
    
  /*--------------------------------------------------------- 
     Initializes the effect. The data is a table of data  
@@ -84,12 +84,11 @@
  	Fraction = math.Clamp( Fraction, 0, 1 ) 
  	
 	self.Entity:SetColor( 255, 255, 255, 100 * Fraction )
-	self.Entity:SetModelScale( Vector() * 100 * (1 - Fraction) )
+	self.Entity:SetModelScale( 100 * (1 - Fraction) )
 	
  		// Draw our model with the Light material 
- 		SetMaterialOverride( matLight ) 
+		render.MaterialOverride( matLight3 )
  			self.Entity:DrawModel() 
- 		SetMaterialOverride( 0 ) 
- 
+ 		render.MaterialOverride( 0 )
    
  end  

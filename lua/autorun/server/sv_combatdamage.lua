@@ -141,13 +141,9 @@ function gcombat.hcgexplode( position, radius, damage, pierce)
 	local tooclose = ents.FindInSphere( position, 2)
 	
 	for _,i in pairs(targets) do
-		print("for loop")
 		if (i:IsWorld() || i:IsPlayer() || i:IsNPC() || string.find(i:GetClass(), "func_") == 1) then
 			return
 		end;
-		
-		print(i)
-		
 		
 		local tracedata = {}
 		tracedata.start = position
