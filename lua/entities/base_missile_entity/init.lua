@@ -49,7 +49,23 @@ function ENT:PhysicsUpdate(phys,deltatime)
 		if(self.CurrentVelocity < self.speed) then
 			self.CurrentVelocity = math.Clamp(self.CurrentVelocity+self.acell,0,self.speed);
 		end;
-		self.Direction = self.Entity:GetUp()*self.CurrentVelocity;
+		self.Direction = self.Entity:GetUp() *self.CurrentVelocity;
+		
+		
+		if self.parent.TerrainAvoid then --attempt to avoid terrain !!Dosent work yet!!
+		--print{"Checking for Terrain"}
+		local trace = {}
+				trace.start = self.Entity:GetPos() + self.Entity:GetUp() * 20
+				trace.endpos = self.Entity:GetPos() + self.Entity:GetUp() * 100
+				trace.filter = {self.Entity}
+			local tr = util.TraceLine( trace )
+		if tr.Entity:IsWorld() then 
+			self.Direction = (self.Entity:GetUp() + tr.HitNormal * 10 + VectorRand() * 5):GetNormalized() * self.CurrentVelocity;
+			print("Avoiding Terrain")
+		end
+	
+	end
+		
 		
 		if(self.track and time > self.tracktime) then
 			self.phys:EnableCollisions(true);
@@ -100,10 +116,12 @@ function ENT:PhysicsUpdate(phys,deltatime)
 					phys:ComputeShadowControl(t);
 			else
 				phys:SetVelocity(self.Direction);
+				print("no target")
 			end;	
 				
 		else
 			phys:SetVelocity(self.Direction);
+			
 		end;
 	else
 		self.Entity:Blow();	
